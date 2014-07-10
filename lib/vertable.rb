@@ -33,48 +33,50 @@
 
 require 'io/console'
 
-class Vertable
-  attr_reader :wordlist, :width
+module Vertable
+  class Vertable
+    attr_reader :wordlist, :width
 
-  def initialize(wordlist, width=$stdout.winsize.last)
-    @wordlist, @width = wordlist, width
-  end
-
-  # Number of columns of words on the screen. Add 1 to width to allow
-  # for the fact that column_width adds 1 space per word, but we don't
-  # need the last space--it pads against the right edge.
-  def num_columns
-    (width+1)/column_width
-  end
-
-  # Width of a column in characters--including the padding char
-  def column_width
-    longest_word_length + 1
-  end
-
-  def words_per_column
-    (wordlist.size.to_f / num_columns).ceil
-  end
-
-  def longest_word_length
-    @longest_word_length ||= longest_word.size
-  end
-
-  def longest_word
-    @longest_word ||= wordlist.sort_by(&:size).last
-  end
-
-  def format_string
-    "%-#{longest_word_length}s"
-  end
-
-  def to_s
-    str = ''
-    columns = wordlist.each_slice(words_per_column)
-    columns.first.size.times do |row_index|
-      str += columns.map { |column| format_string % column[row_index] } * ' '
-      str += "\n"
+    def initialize(wordlist, width=$stdout.winsize.last)
+      @wordlist, @width = wordlist, width
     end
-    str
+
+    # Number of columns of words on the screen. Add 1 to width to allow
+    # for the fact that column_width adds 1 space per word, but we don't
+    # need the last space--it pads against the right edge.
+    def num_columns
+      (width+1)/column_width
+    end
+
+    # Width of a column in characters--including the padding char
+    def column_width
+      longest_word_length + 1
+    end
+
+    def words_per_column
+      (wordlist.size.to_f / num_columns).ceil
+    end
+
+    def longest_word_length
+      @longest_word_length ||= longest_word.size
+    end
+
+    def longest_word
+      @longest_word ||= wordlist.sort_by(&:size).last
+    end
+
+    def format_string
+      "%-#{longest_word_length}s"
+    end
+
+    def to_s
+      str = ''
+      columns = wordlist.each_slice(words_per_column)
+      columns.first.size.times do |row_index|
+        str += columns.map { |column| format_string % column[row_index] } * ' '
+        str += "\n"
+      end
+      str
+    end
   end
 end
